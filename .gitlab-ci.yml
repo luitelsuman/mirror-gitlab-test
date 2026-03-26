@@ -1,0 +1,18 @@
+stages:
+  - mirror
+mirror-all-to-github:
+  stage: mirror
+  image: 
+    name: alpine/git:latest
+    entrypoint: [""]
+  variables:
+    GIT_STRATEGY: clone
+    GIT_CHECKOUT: "false"
+  script:
+    - git fetch origin '+refs/heads/*:refs/heads/*' --prune
+    # Use the variable instead of the hardcoded string
+    - git remote add github https://luitelsuman:${GH_TOKEN}@github.com/luitelsuman/mirror-gitlab-test.git || git remote set-url github https://luitelsuman:${GH_TOKEN}@github.com/luitelsuman/mirror-gitlab-test.git
+    - git push github --all --force
+    - git push github --tags --force
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
